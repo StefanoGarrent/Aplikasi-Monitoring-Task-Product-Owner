@@ -110,17 +110,8 @@ if (isset($_POST['submit'])) {
             </div>
 
             <nav class="flex-1 space-y-1">
-                <a href="home.php" class="flex items-center px-6 py-3 hover:bg-[#002b55] transition text-gray-300">
-                    <i class="fas fa-home mr-4 w-5 text-center"></i> Home
-                </a>
-                <a href="team.php" class="flex items-center px-6 py-3 hover:bg-[#002b55] transition text-gray-300">
-                    <i class="fas fa-user-friends mr-4 w-5 text-center"></i> Team
-                </a>
-                <a href="client.php" class="flex items-center px-6 py-3 bg-[#00D285] text-white font-semibold shadow-lg">
-                    <i class="fas fa-hospital mr-4 w-5 text-center"></i> Client
-                </a>
-                <a href="task.php" class="flex items-center px-6 py-3 hover:bg-[#002b55] transition text-gray-300">
-                    <i class="fas fa-clipboard-list mr-4 w-5 text-center"></i> Task
+                <a href="client.php" class="flex items-center px-6 py-3 bg-[#00D285] text-white font-bold hover:bg-[#00b572] transition">
+                    <i class="fas fa-arrow-left mr-3"></i> Kembali ke Client
                 </a>
             </nav>
 

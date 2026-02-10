@@ -104,9 +104,23 @@ $resDoc = mysqli_query($conn, $qDoc);
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0 h-10 w-10 bg-red-50 rounded-lg flex items-center justify-center text-red-500 mr-3">
-                                            <i class="fas fa-file-pdf text-xl"></i>
-                                        </div>
+                                        <?php
+                                            if(pathinfo($row['file_path'], PATHINFO_EXTENSION) === 'pdf') {
+                                                // Tampilkan ikon PDF khusus
+                                        ?>
+                                                <div class="flex-shrink-0 h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center text-red-500 mr-3">
+                                                    <i class="fas fa-file-pdf text-2xl"></i>
+                                                </div>
+                                        <?php
+                                            } else {
+                                                // Tampilkan ikon dokumen umum
+                                                ?>
+                                                <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-500 mr-3">
+                                                    <i class="fas fa-file-alt text-2xl"></i>
+                                                </div>
+                                        <?php
+                                            } 
+                                        ?>
                                         <div>
                                             <span class="text-sm font-bold text-gray-800 block mb-1">
                                                 <?= htmlspecialchars($row['judul']) ?>
