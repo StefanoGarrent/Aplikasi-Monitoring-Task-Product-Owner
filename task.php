@@ -24,14 +24,14 @@ $offset = ($page - 1) * $limit;
 
 // 3. Membangun Kondisi Filter
 $conditions = [];
-if ($filterProduct != 'all') $conditions[] = "product = '$filterProduct'";
-if ($filterFaskes != 'all') $conditions[] = "faskes = '$filterFaskes'";
-if ($filterEnginer != 'all') $conditions[] = "enginer = '$filterEnginer'";
-if ($filterJenis != 'all') $conditions[] = "jenis = '$filterJenis'";
-if ($filterStatus == 'completed') $conditions[] = "task_url != '-'";
-if ($filterStatus == 'not') $conditions[] = "task_url = '-'";
+if ($filterProduct != 'all') $conditions[] = "task.product = '$filterProduct'";
+if ($filterFaskes != 'all') $conditions[] = "task.faskes = '$filterFaskes'";
+if ($filterEnginer != 'all') $conditions[] = "task.enginer = '$filterEnginer'";
+if ($filterJenis != 'all') $conditions[] = "task.jenis = '$filterJenis'";
+if ($filterStatus == 'completed') $conditions[] = "task.task_url != '-'";
+if ($filterStatus == 'not') $conditions[] = "task.task_url = '-'";
 if (!empty($filterStart) && !empty($filterEnd)) {
-    $conditions[] = "tgl_release BETWEEN '$filterStart' AND '$filterEnd'";
+    $conditions[] = "task.tgl_release BETWEEN '$filterStart' AND '$filterEnd'";
 }
 
 $whereClause = "";
@@ -40,13 +40,15 @@ if (count($conditions) > 0) {
 }
 
 // 4. Hitung Total Data untuk Paginasi
-$countQuery = "SELECT COUNT(*) as total FROM task" . $whereClause;
+$countQuery = "SELECT COUNT(*) as total FROM task LEFT JOIN dokumen ON task.id_dokumen = dokumen.id" . $whereClause;
 $countResult = mysqli_query($conn, $countQuery);
 $totalData = mysqli_fetch_assoc($countResult)['total'];
 $totalPages = ceil($totalData / $limit);
 
-// 5. Query Utama
-$query = "SELECT * FROM task" . $whereClause . " ORDER BY id DESC LIMIT $limit OFFSET $offset";
+// 5. Query Utama (JOIN dengan dokumen)
+$query = "SELECT task.*, dokumen.judul AS dok_judul, dokumen.file_path AS dok_file, dokumen.doc_url AS dok_url, dokumen.jenis AS dok_jenis
+          FROM task
+          LEFT JOIN dokumen ON task.id_dokumen = dokumen.id" . $whereClause . " ORDER BY task.id DESC LIMIT $limit OFFSET $offset";
 $resTask = mysqli_query($conn, $query);
 ?>
 
@@ -320,6 +322,7 @@ $resTask = mysqli_query($conn, $query);
                         <th class="px-4 py-4 text-left text-[10px] font-bold text-gray-600 uppercase tracking-widest">Task (URL)</th>
                         <th class="px-4 py-4 text-left text-[10px] font-bold text-gray-600 uppercase tracking-widest">Jenis / Keterangan</th>
                         <th class="px-4 py-4 text-left text-[10px] font-bold text-gray-600 uppercase tracking-widest">Enginer</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest">Dokumen</th>
                         <th class="px-4 py-4 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest whitespace-nowrap">Tanggal Release</th>
                         <th class="px-4 py-4 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest">Cek</th>
                         <th class="px-4 py-4 text-center text-[10px] font-bold text-gray-600 uppercase tracking-widest">Status</th>
@@ -347,6 +350,29 @@ $resTask = mysqli_query($conn, $query);
                                     <div class="text-[10px] text-gray-500 italic"><?= htmlspecialchars($row['keterangan'] ?? '-') ?></div>
                                 </td>
                                 <td class="px-4 py-4 text-xs font-semibold text-gray-600"><?= htmlspecialchars($row['enginer'] ?? '-') ?></td>
+                                <td class="px-4 py-4 text-center">
+                                    <?php if (!empty($row['dok_judul'])): ?>
+                                        <div class="flex flex-col items-center gap-1.5">
+                                            <span class="text-[10px] font-bold text-gray-700 leading-tight text-center" title="<?= htmlspecialchars($row['dok_judul']) ?>">
+                                                <?= htmlspecialchars(mb_strimwidth($row['dok_judul'], 0, 20, '...')) ?>
+                                            </span>
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <?php if (!empty($row['dok_url'])): ?>
+                                                    <a href="<?= htmlspecialchars($row['dok_url']) ?>" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition text-[10px] font-semibold" title="View Dokumen">
+                                                        <i class="fas fa-eye text-[10px]"></i> View
+                                                    </a>
+                                                <?php endif; ?>
+                                                <?php if (!empty($row['dok_file']) && $row['dok_file'] != '-'): ?>
+                                                    <a href="<?= htmlspecialchars($row['dok_file']) ?>" download class="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-800 transition text-[10px] font-semibold" title="Download Dokumen">
+                                                        <i class="fas fa-download text-[10px]"></i> Download
+                                                    </a>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-gray-300 text-xs italic">Belum ada</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="px-4 py-4 text-center text-xs font-medium text-gray-700">
                                     <?= ($row['tgl_release'] && $row['tgl_release'] != '0000-00-00') ? date('d-m-Y', strtotime($row['tgl_release'])) : '<span class="text-gray-400 italic">-</span>' ?>
                                 </td>
@@ -385,7 +411,7 @@ $resTask = mysqli_query($conn, $query);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="10" class="p-10 text-center text-gray-400 italic text-sm">Data tidak ditemukan</td>
+                            <td colspan="11" class="p-10 text-center text-gray-400 italic text-sm">Data tidak ditemukan</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
