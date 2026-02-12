@@ -5,7 +5,7 @@ if (!isset($_SESSION['loggedin'])) {
     exit;
 }
 
-require_once 'services/koneksi.php'; 
+require_once 'services/koneksi.php';
 
 $resProduct = mysqli_query($conn, "SELECT COUNT(*) as total FROM team WHERE tim = 'PRODUCT'");
 $countProduct = mysqli_fetch_assoc($resProduct)['total'];
@@ -16,19 +16,21 @@ $countEnginer = mysqli_fetch_assoc($resEnginer)['total'];
 $resClient = mysqli_query($conn, "SELECT COUNT(*) as total FROM client");
 $countClient = mysqli_fetch_assoc($resClient)['total'];
 
-$resTaskFaskes = mysqli_query($conn, 
-"SELECT c.nama as faskes, 
+$resTaskFaskes = mysqli_query(
+    $conn,
+    "SELECT c.nama as faskes, 
 COUNT(t.id) as jumlah 
 FROM client c
-LEFT JOIN task t ON c.nama = t.faskes AND t.task_url = '-'
+LEFT JOIN task t ON c.nama = t.faskes AND t.status_cek != 'Selesai'
 GROUP BY c.nama 
 ORDER BY jumlah DESC"
 );
 
-$resTaskProduct = mysqli_query($conn, 
-"SELECT tm.nama as product, COUNT(t.id) as jumlah 
+$resTaskProduct = mysqli_query(
+    $conn,
+    "SELECT tm.nama as product, COUNT(t.id) as jumlah 
 FROM team tm
-LEFT JOIN task t ON tm.nama = t.product AND t.task_url = '-'
+LEFT JOIN task t ON tm.nama = t.product AND t.status_cek != 'Selesai'
 WHERE tm.tim = 'PRODUCT'
 GROUP BY tm.nama 
 ORDER BY jumlah DESC"
@@ -39,6 +41,7 @@ ORDER BY jumlah DESC"
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,9 +50,13 @@ ORDER BY jumlah DESC"
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-[#F0F2F5]">
 
     <div class="flex min-h-screen">
@@ -103,19 +110,19 @@ ORDER BY jumlah DESC"
                         <h4 class="text-gray-600 font-bold text-sm tracking-wider uppercase">Open Task (Faskes)</h4>
                     </div>
                     <div class="p-6 space-y-5">
-                        <?php 
-                            while($row = mysqli_fetch_assoc($resTaskFaskes)):
-                            if($row['jumlah'] > 0): 
+                        <?php
+                        while ($row = mysqli_fetch_assoc($resTaskFaskes)):
+                            if ($row['jumlah'] > 0):
                         ?>
-                        <div class="flex items-center space-x-4">
-                            <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold">
-                                <?= $row['jumlah'] ?>
-                            </span>
-                            <span class="text-gray-700 font-medium uppercase"><?= $row['faskes'] ?></span>
-                        </div>
-                        <?php 
+                                <div class="flex items-center space-x-4">
+                                    <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold">
+                                        <?= $row['jumlah'] ?>
+                                    </span>
+                                    <span class="text-gray-700 font-medium uppercase"><?= $row['faskes'] ?></span>
+                                </div>
+                        <?php
                             endif;
-                            endwhile; 
+                        endwhile;
                         ?>
                     </div>
                 </div>
@@ -125,19 +132,19 @@ ORDER BY jumlah DESC"
                         <h4 class="text-gray-600 font-bold text-sm tracking-wider uppercase">Open Task (Product)</h4>
                     </div>
                     <div class="p-6 space-y-5">
-                        <?php 
-                            while($row = mysqli_fetch_assoc($resTaskProduct)):
-                            if($row['jumlah'] > 0): 
+                        <?php
+                        while ($row = mysqli_fetch_assoc($resTaskProduct)):
+                            if ($row['jumlah'] > 0):
                         ?>
-                        <div class="flex items-center space-x-4">
-                            <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold">
-                                <?= $row['jumlah'] ?>
-                            </span>
-                            <span class="text-gray-700 font-medium uppercase"><?= $row['product'] ?></span>
-                        </div>
-                        <?php 
+                                <div class="flex items-center space-x-4">
+                                    <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold">
+                                        <?= $row['jumlah'] ?>
+                                    </span>
+                                    <span class="text-gray-700 font-medium uppercase"><?= $row['product'] ?></span>
+                                </div>
+                        <?php
                             endif;
-                            endwhile; 
+                        endwhile;
                         ?>
                     </div>
                 </div>
@@ -146,4 +153,5 @@ ORDER BY jumlah DESC"
     </div>
 
 </body>
+
 </html>

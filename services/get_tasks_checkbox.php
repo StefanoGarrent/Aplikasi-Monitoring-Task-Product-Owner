@@ -17,7 +17,7 @@ if (isset($_GET['client_id']) && isset($_GET['doc_id'])) {
     $query = "SELECT id, fitur, jenis, id_dokumen FROM task 
               WHERE faskes = '$namaFaskes' 
               AND (id_dokumen IS NULL OR id_dokumen = '$docId')
-              AND (task_url = '-' OR status_cek = 'Belum di cek')
+              AND status_cek != 'Selesai'
               ORDER BY id DESC";
 
     $result = mysqli_query($conn, $query);
