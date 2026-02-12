@@ -184,12 +184,20 @@ $resDoc = mysqli_query($conn, $qDoc);
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    <a href="delete_dokumen.php?id=<?= $row['id'] ?>&client=<?= $id_client ?>" 
-                                       onclick="return confirm('Apakah Anda yakin ingin menghapus dokumen ini? \n\nPERHATIAN: Task yang terhubung akan dilepas (tidak terhapus).')" 
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition"
-                                       title="Hapus Dokumen">
-                                        <i class="fas fa-trash-alt text-sm"></i>
-                                    </a>
+                                    <div class="flex justify-center space-x-3">
+                                        <a href="edit_dokumen.php?id=<?= $row['id'] ?>" 
+                                           class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-700 transition" 
+                                           title="Edit Dokumen">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="delete_dokumen.php?id=<?= $row['id'] ?>&client=<?= $id_client ?>" 
+                                           onclick="return confirm('Apakah Anda yakin ingin menghapus dokumen ini? \n\nPERHATIAN: Task yang terhubung akan dilepas (tidak terhapus).')" 
+                                           class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition"
+                                           title="Hapus Dokumen">
+                                            <i class="fas fa-trash-alt text-sm"></i>
+                                        </a>
+                                    </div>
+
                                 </td>
                             </tr>
                             <?php endwhile; ?>
