@@ -301,8 +301,11 @@ $resDoc = mysqli_query($conn, $qDoc);
                             const isChecked = task.checked ? 'checked' : '';
                             const bgClass = task.checked ? 'bg-blue-50 border-blue-300 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-200 hover:border-blue-300';
                             const showRadio = task.checked ? '' : 'hidden';
-                            const isRevisi = task.status_cek === 'Revisi' ? 'checked' : '';
-                            const isSelesai = task.status_cek === 'Selesai' ? 'checked' : '';
+                            const jenisHtml = (task.jenis && task.jenis !== '-') ?
+                                `<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-200 text-gray-600">${task.jenis}</span>` :
+                                '';
+                            const revisiActive = task.status_cek === 'Revisi';
+                            const selesaiActive = task.status_cek === 'Selesai';
                             const item = `
                             <div class="mb-2 border rounded-xl transition-all duration-200 ${bgClass}" id="task-card-${task.id}">
                                 <label class="flex items-start p-3 cursor-pointer group">
@@ -314,24 +317,23 @@ $resDoc = mysqli_query($conn, $qDoc);
                                     <div class="ml-3 text-sm flex-1">
                                         <span class="block font-semibold text-gray-800 group-hover:text-[#003674] transition-colors">${task.fitur}</span>
                                         <div class="flex items-center mt-1 space-x-2">
-                                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-200 text-gray-600">${task.jenis}</span>
+                                            ${jenisHtml}
                                             ${task.checked ? '<span class="text-[10px] text-blue-600 font-medium"><i class="fas fa-check-circle"></i> Terpilih</span>' : ''}
                                         </div>
                                     </div>
                                 </label>
-                                <div class="px-3 pb-3 pt-0 ml-8 ${showRadio}" id="status-radio-${task.id}">
-                                    <div class="flex items-center gap-4 bg-white border border-gray-200 rounded-lg px-3 py-2">
-                                        <span class="text-[10px] font-bold text-gray-500 uppercase">Status:</span>
-                                        <label class="flex items-center gap-1.5 cursor-pointer">
-                                            <input type="radio" name="status_task[${task.id}]" value="Revisi" ${isRevisi}
-                                                   class="w-3.5 h-3.5 cursor-pointer" style="accent-color: #D97706;">
-                                            <span class="text-[11px] font-semibold text-amber-600">Revisi</span>
-                                        </label>
-                                        <label class="flex items-center gap-1.5 cursor-pointer">
-                                            <input type="radio" name="status_task[${task.id}]" value="Selesai" ${isSelesai}
-                                                   class="w-3.5 h-3.5 cursor-pointer" style="accent-color: #059669;">
-                                            <span class="text-[11px] font-semibold text-green-600">Selesai</span>
-                                        </label>
+                                <div class="px-3 pb-3 pt-1 ml-8 ${showRadio}" id="status-radio-${task.id}">
+                                    <input type="hidden" name="status_task[${task.id}]" id="status-value-${task.id}" value="${task.status_cek || ''}">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase mr-1">Status:</span>
+                                        <button type="button" onclick="toggleStatusPill(${task.id}, 'Revisi')" id="pill-revisi-${task.id}"
+                                                class="px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border ${revisiActive ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm' : 'bg-gray-50 text-gray-400 border-gray-200 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200'}">
+                                            <i class="fas fa-redo-alt mr-1 text-[9px]"></i>Revisi
+                                        </button>
+                                        <button type="button" onclick="toggleStatusPill(${task.id}, 'Selesai')" id="pill-selesai-${task.id}"
+                                                class="px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border ${selesaiActive ? 'bg-green-100 text-green-700 border-green-300 shadow-sm' : 'bg-gray-50 text-gray-400 border-gray-200 hover:bg-green-50 hover:text-green-600 hover:border-green-200'}">
+                                            <i class="fas fa-check-circle mr-1 text-[9px]"></i>Selesai
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -352,6 +354,25 @@ $resDoc = mysqli_query($conn, $qDoc);
                 });
         }
 
+        function toggleStatusPill(taskId, status) {
+            const hiddenInput = document.getElementById('status-value-' + taskId);
+            const pillRevisi = document.getElementById('pill-revisi-' + taskId);
+            const pillSelesai = document.getElementById('pill-selesai-' + taskId);
+
+            hiddenInput.value = status;
+
+            // Reset both pills
+            pillRevisi.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-gray-50 text-gray-400 border-gray-200 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200';
+            pillSelesai.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-gray-50 text-gray-400 border-gray-200 hover:bg-green-50 hover:text-green-600 hover:border-green-200';
+
+            // Activate selected pill
+            if (status === 'Revisi') {
+                pillRevisi.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-amber-100 text-amber-700 border-amber-300 shadow-sm';
+            } else {
+                pillSelesai.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-green-100 text-green-700 border-green-300 shadow-sm';
+            }
+        }
+
         function toggleStatusRadio(taskId, isChecked) {
             const radioDiv = document.getElementById('status-radio-' + taskId);
             const card = document.getElementById('task-card-' + taskId);
@@ -363,8 +384,12 @@ $resDoc = mysqli_query($conn, $qDoc);
                 radioDiv.classList.add('hidden');
                 card.classList.remove('bg-blue-50', 'border-blue-300', 'shadow-sm', 'ring-1', 'ring-blue-200');
                 card.classList.add('bg-white', 'border-gray-200');
-                // Reset radio buttons
-                radioDiv.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+                // Reset status
+                document.getElementById('status-value-' + taskId).value = '';
+                const pillRevisi = document.getElementById('pill-revisi-' + taskId);
+                const pillSelesai = document.getElementById('pill-selesai-' + taskId);
+                pillRevisi.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-gray-50 text-gray-400 border-gray-200 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200';
+                pillSelesai.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-gray-50 text-gray-400 border-gray-200 hover:bg-green-50 hover:text-green-600 hover:border-green-200';
             }
         }
 
