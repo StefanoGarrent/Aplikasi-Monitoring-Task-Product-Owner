@@ -14,7 +14,7 @@ if (isset($_GET['client_id']) && isset($_GET['doc_id'])) {
     // Ambil task milik faskes ini
     // DAN (task tersebut belum punya dokumen ATAU task tersebut milik dokumen ini)
     // DAN (task belum selesai)
-    $query = "SELECT id, fitur, jenis, id_dokumen FROM task 
+    $query = "SELECT id, fitur, jenis, id_dokumen, status_cek FROM task 
               WHERE faskes = '$namaFaskes' 
               AND (id_dokumen IS NULL OR id_dokumen = '$docId')
               AND status_cek != 'Selesai'

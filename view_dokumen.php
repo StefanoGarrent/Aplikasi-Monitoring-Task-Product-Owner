@@ -300,20 +300,41 @@ $resDoc = mysqli_query($conn, $qDoc);
                         data.forEach(task => {
                             const isChecked = task.checked ? 'checked' : '';
                             const bgClass = task.checked ? 'bg-blue-50 border-blue-300 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-200 hover:border-blue-300';
+                            const showRadio = task.checked ? '' : 'hidden';
+                            const isRevisi = task.status_cek === 'Revisi' ? 'checked' : '';
+                            const isSelesai = task.status_cek === 'Selesai' ? 'checked' : '';
                             const item = `
-                            <label class="flex items-start p-3 mb-2 border rounded-xl cursor-pointer transition-all duration-200 ${bgClass} group">
-                                <div class="flex items-center h-5">
-                                    <input type="checkbox" name="task_ids[]" value="${task.id}" ${isChecked} 
-                                           class="w-5 h-5 text-[#003674] border-gray-300 rounded focus:ring-[#003674] focus:ring-offset-0 transition cursor-pointer">
-                                </div>
-                                <div class="ml-3 text-sm">
-                                    <span class="block font-semibold text-gray-800 group-hover:text-[#003674] transition-colors">${task.fitur}</span>
-                                    <div class="flex items-center mt-1 space-x-2">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-200 text-gray-600">${task.jenis}</span>
-                                        ${task.checked ? '<span class="text-[10px] text-blue-600 font-medium"><i class="fas fa-check-circle"></i> Terpilih</span>' : ''}
+                            <div class="mb-2 border rounded-xl transition-all duration-200 ${bgClass}" id="task-card-${task.id}">
+                                <label class="flex items-start p-3 cursor-pointer group">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" name="task_ids[]" value="${task.id}" ${isChecked} 
+                                               class="w-5 h-5 text-[#003674] border-gray-300 rounded focus:ring-[#003674] focus:ring-offset-0 transition cursor-pointer"
+                                               onchange="toggleStatusRadio(${task.id}, this.checked)">
+                                    </div>
+                                    <div class="ml-3 text-sm flex-1">
+                                        <span class="block font-semibold text-gray-800 group-hover:text-[#003674] transition-colors">${task.fitur}</span>
+                                        <div class="flex items-center mt-1 space-x-2">
+                                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-200 text-gray-600">${task.jenis}</span>
+                                            ${task.checked ? '<span class="text-[10px] text-blue-600 font-medium"><i class="fas fa-check-circle"></i> Terpilih</span>' : ''}
+                                        </div>
+                                    </div>
+                                </label>
+                                <div class="px-3 pb-3 pt-0 ml-8 ${showRadio}" id="status-radio-${task.id}">
+                                    <div class="flex items-center gap-4 bg-white border border-gray-200 rounded-lg px-3 py-2">
+                                        <span class="text-[10px] font-bold text-gray-500 uppercase">Status:</span>
+                                        <label class="flex items-center gap-1.5 cursor-pointer">
+                                            <input type="radio" name="status_task[${task.id}]" value="Revisi" ${isRevisi}
+                                                   class="w-3.5 h-3.5 cursor-pointer" style="accent-color: #D97706;">
+                                            <span class="text-[11px] font-semibold text-amber-600">Revisi</span>
+                                        </label>
+                                        <label class="flex items-center gap-1.5 cursor-pointer">
+                                            <input type="radio" name="status_task[${task.id}]" value="Selesai" ${isSelesai}
+                                                   class="w-3.5 h-3.5 cursor-pointer" style="accent-color: #059669;">
+                                            <span class="text-[11px] font-semibold text-green-600">Selesai</span>
+                                        </label>
                                     </div>
                                 </div>
-                            </label>
+                            </div>
                         `;
                             container.innerHTML += item;
                         });
@@ -329,6 +350,22 @@ $resDoc = mysqli_query($conn, $qDoc);
                     </div>
                 `;
                 });
+        }
+
+        function toggleStatusRadio(taskId, isChecked) {
+            const radioDiv = document.getElementById('status-radio-' + taskId);
+            const card = document.getElementById('task-card-' + taskId);
+            if (isChecked) {
+                radioDiv.classList.remove('hidden');
+                card.classList.remove('bg-white', 'border-gray-200');
+                card.classList.add('bg-blue-50', 'border-blue-300', 'shadow-sm', 'ring-1', 'ring-blue-200');
+            } else {
+                radioDiv.classList.add('hidden');
+                card.classList.remove('bg-blue-50', 'border-blue-300', 'shadow-sm', 'ring-1', 'ring-blue-200');
+                card.classList.add('bg-white', 'border-gray-200');
+                // Reset radio buttons
+                radioDiv.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            }
         }
 
         function closeModal() {
