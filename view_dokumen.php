@@ -359,11 +359,17 @@ $resDoc = mysqli_query($conn, $qDoc);
             const pillRevisi = document.getElementById('pill-revisi-' + taskId);
             const pillSelesai = document.getElementById('pill-selesai-' + taskId);
 
-            hiddenInput.value = status;
-
             // Reset both pills
             pillRevisi.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-gray-50 text-gray-400 border-gray-200 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200';
             pillSelesai.className = 'px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 border bg-gray-50 text-gray-400 border-gray-200 hover:bg-green-50 hover:text-green-600 hover:border-green-200';
+
+            // Toggle: if same pill clicked again, deselect
+            if (hiddenInput.value === status) {
+                hiddenInput.value = '';
+                return;
+            }
+
+            hiddenInput.value = status;
 
             // Activate selected pill
             if (status === 'Revisi') {
