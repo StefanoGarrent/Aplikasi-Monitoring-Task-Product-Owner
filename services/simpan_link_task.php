@@ -6,8 +6,8 @@ if (isset($_POST['simpan_relasi'])) {
     $id_dokumen = mysqli_real_escape_string($conn, $_POST['id_dokumen']);
     $id_client = mysqli_real_escape_string($conn, $_POST['id_client']);
 
-    // 1. Reset semua task yang sebelumnya terhubung ke dokumen ini
-    mysqli_query($conn, "UPDATE task SET id_dokumen = NULL WHERE id_dokumen = '$id_dokumen'");
+    // 1. Reset semua task yang sebelumnya terhubung ke dokumen ini (relasi + status)
+    mysqli_query($conn, "UPDATE task SET id_dokumen = NULL, status_cek = 'Belum di cek' WHERE id_dokumen = '$id_dokumen'");
 
     // 2. Update task yang dipilih (jika ada)
     if (isset($_POST['task_ids']) && is_array($_POST['task_ids'])) {
