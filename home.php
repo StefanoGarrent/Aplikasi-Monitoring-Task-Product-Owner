@@ -114,12 +114,13 @@ ORDER BY jumlah DESC"
                         while ($row = mysqli_fetch_assoc($resTaskFaskes)):
                             if ($row['jumlah'] > 0):
                         ?>
-                                <div class="flex items-center space-x-4">
-                                    <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold">
+                                <a href="task.php?faskes=<?= urlencode($row['faskes']) ?>&status_task=not" class="flex items-center space-x-4 p-2 -m-2 rounded-lg hover:bg-blue-50 transition-all duration-200 group cursor-pointer">
+                                    <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold group-hover:scale-110 transition-transform">
                                         <?= $row['jumlah'] ?>
                                     </span>
-                                    <span class="text-gray-700 font-medium uppercase"><?= $row['faskes'] ?></span>
-                                </div>
+                                    <span class="text-gray-700 font-medium uppercase group-hover:text-[#003674] transition-colors"><?= $row['faskes'] ?></span>
+                                    <i class="fas fa-chevron-right text-gray-300 group-hover:text-[#00B4FF] ml-auto text-xs transition-colors"></i>
+                                </a>
                         <?php
                             endif;
                         endwhile;
@@ -136,12 +137,13 @@ ORDER BY jumlah DESC"
                         while ($row = mysqli_fetch_assoc($resTaskProduct)):
                             if ($row['jumlah'] > 0):
                         ?>
-                                <div class="flex items-center space-x-4">
-                                    <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold">
+                                <a href="task.php?product=<?= urlencode($row['product']) ?>&status_task=not" class="flex items-center space-x-4 p-2 -m-2 rounded-lg hover:bg-blue-50 transition-all duration-200 group cursor-pointer">
+                                    <span class="bg-[#00B4FF] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold group-hover:scale-110 transition-transform">
                                         <?= $row['jumlah'] ?>
                                     </span>
-                                    <span class="text-gray-700 font-medium uppercase"><?= $row['product'] ?></span>
-                                </div>
+                                    <span class="text-gray-700 font-medium uppercase group-hover:text-[#003674] transition-colors"><?= $row['product'] ?></span>
+                                    <i class="fas fa-chevron-right text-gray-300 group-hover:text-[#00B4FF] ml-auto text-xs transition-colors"></i>
+                                </a>
                         <?php
                             endif;
                         endwhile;
