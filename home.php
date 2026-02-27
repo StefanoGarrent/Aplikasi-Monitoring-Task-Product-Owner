@@ -16,6 +16,8 @@ $countEnginer = mysqli_fetch_assoc($resEnginer)['total'];
 $resClient = mysqli_query($conn, "SELECT COUNT(*) as total FROM client");
 $countClient = mysqli_fetch_assoc($resClient)['total'];
 
+
+
 $resTaskFaskes = mysqli_query(
     $conn,
     "SELECT c.nama as faskes, 
@@ -36,7 +38,15 @@ GROUP BY tm.nama
 ORDER BY jumlah DESC"
 );
 
-
+$resTaskRevisi = mysqli_query(
+    $conn,
+    "SELECT c.nama as faskes, 
+COUNT(t.id) as jumlah 
+FROM client c
+LEFT JOIN task t ON c.nama = t.faskes AND t.status_cek = 'Revisi'
+GROUP BY c.nama 
+ORDER BY jumlah DESC"
+);
 ?>
 
 <!DOCTYPE html>
@@ -104,7 +114,7 @@ ORDER BY jumlah DESC"
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-10">
+            <div class="grid grid-cols-3 gap-10">
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                     <div class="bg-[#E9E9F2] px-6 py-4">
                         <h4 class="text-gray-600 font-bold text-sm tracking-wider uppercase">Open Task (Faskes)</h4>
@@ -143,6 +153,28 @@ ORDER BY jumlah DESC"
                                     </span>
                                     <span class="text-gray-700 font-medium uppercase group-hover:text-[#003674] transition-colors"><?= $row['product'] ?></span>
                                     <i class="fas fa-chevron-right text-gray-300 group-hover:text-[#00B4FF] ml-auto text-xs transition-colors"></i>
+                                </a>
+                        <?php
+                            endif;
+                        endwhile;
+                        ?>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="bg-[#E9E9F2] px-6 py-4">
+                        <h4 class="text-gray-600 font-bold text-sm tracking-wider uppercase">Revisi Task</h4>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        <?php
+                        while ($row = mysqli_fetch_assoc($resTaskRevisi)):
+                            if ($row['jumlah'] > 0):
+                        ?>
+                                <a href="task.php?faskes=<?= urlencode($row['faskes']) ?>&status_cek=Revisi" class="flex items-center space-x-4 p-2 -m-2 rounded-lg hover:bg-orange-50 transition-all duration-200 group cursor-pointer">
+                                    <span class="bg-[#D97706] text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold group-hover:scale-110 transition-transform">
+                                        <?= $row['jumlah'] ?>
+                                    </span>
+                                    <span class="text-gray-700 font-medium uppercase group-hover:text-[#92400E] transition-colors"><?= $row['faskes'] ?></span>
+                                    <i class="fas fa-chevron-right text-gray-300 group-hover:text-[#D97706] ml-auto text-xs transition-colors"></i>
                                 </a>
                         <?php
                             endif;

@@ -13,6 +13,7 @@ $filterFaskes = isset($_GET['faskes']) ? mysqli_real_escape_string($conn, $_GET[
 $filterEnginer = isset($_GET['enginer']) ? mysqli_real_escape_string($conn, $_GET['enginer']) : 'all';
 $filterJenis = isset($_GET['jenis']) ? mysqli_real_escape_string($conn, $_GET['jenis']) : 'all';
 $filterStatus = isset($_GET['status_task']) ? mysqli_real_escape_string($conn, $_GET['status_task']) : 'all';
+$filterStatusCek = isset($_GET['status_cek']) ? mysqli_real_escape_string($conn, $_GET['status_cek']) : 'all';
 $filterStart = isset($_GET['start_date']) ? mysqli_real_escape_string($conn, $_GET['start_date']) : '';
 $filterEnd = isset($_GET['end_date']) ? mysqli_real_escape_string($conn, $_GET['end_date']) : '';
 
@@ -30,6 +31,7 @@ if ($filterEnginer != 'all') $conditions[] = "task.enginer = '$filterEnginer'";
 if ($filterJenis != 'all') $conditions[] = "task.jenis = '$filterJenis'";
 if ($filterStatus == 'completed') $conditions[] = "task.task_url != '-'";
 if ($filterStatus == 'not') $conditions[] = "task.task_url = '-'";
+if ($filterStatusCek != 'all') $conditions[] = "task.status_cek = '$filterStatusCek'";
 if (!empty($filterStart) && !empty($filterEnd)) {
     $conditions[] = "task.tgl_release BETWEEN '$filterStart' AND '$filterEnd'";
 }
