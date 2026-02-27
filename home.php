@@ -21,7 +21,7 @@ $resTaskFaskes = mysqli_query(
     "SELECT c.nama as faskes, 
 COUNT(t.id) as jumlah 
 FROM client c
-LEFT JOIN task t ON c.nama = t.faskes AND t.status_cek != 'Selesai'
+LEFT JOIN task t ON c.nama = t.faskes AND t.task_url = '-'
 GROUP BY c.nama 
 ORDER BY jumlah DESC"
 );
@@ -30,7 +30,7 @@ $resTaskProduct = mysqli_query(
     $conn,
     "SELECT tm.nama as product, COUNT(t.id) as jumlah 
 FROM team tm
-LEFT JOIN task t ON tm.nama = t.product AND t.status_cek != 'Selesai'
+LEFT JOIN task t ON tm.nama = t.product AND t.task_url = '-'
 WHERE tm.tim = 'PRODUCT'
 GROUP BY tm.nama 
 ORDER BY jumlah DESC"
