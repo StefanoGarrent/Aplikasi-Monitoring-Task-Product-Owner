@@ -269,6 +269,21 @@ $resTask = mysqli_query($conn, $query);
                         </select>
                     </div>
 
+                     <!-- Filter Status Cek -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2 flex items-center">
+                            <i class="fas fa-clipboard-check text-[#003674] mr-2 text-sm"></i>
+                            Status Cek
+                        </label>
+                        <select onchange="updateFilter('status_cek', this.value)" class="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm bg-white focus:border-[#00D285] focus:ring-2 focus:ring-[#00D285] focus:ring-opacity-20 outline-none transition">
+                            <option value="all" <?= $filterStatusCek == 'all' ? 'selected' : '' ?>>Semua Status Cek</option>
+                            <option value="Belum di cek" <?= $filterStatusCek == 'Belum di cek' ? 'selected' : '' ?>>Belum di cek</option>
+                            <option value="Revisi" <?= $filterStatusCek == 'Revisi' ? 'selected' : '' ?>>Revisi</option>
+                            <option value="Selesai" <?= $filterStatusCek == 'Selesai' ? 'selected' : '' ?>>Selesai</option>
+                        </select>
+                    </div>
+
+
                     <!-- Filter Tanggal Dari -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-2 flex items-center">
