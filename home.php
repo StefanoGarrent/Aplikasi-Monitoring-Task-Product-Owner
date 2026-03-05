@@ -47,6 +47,16 @@ LEFT JOIN task t ON c.nama = t.faskes AND t.status_cek = 'Revisi'
 GROUP BY c.nama 
 ORDER BY jumlah DESC"
 );
+
+$resTaskOverdue = mysqli_query(
+    $conn,
+    "SELECT * FROM task 
+     WHERE status_cek != 'Selesai' 
+     AND tgl_release IS NOT NULL 
+     AND tgl_release != '0000-00-00' 
+     AND tgl_release < CURDATE()
+     ORDER BY tgl_release ASC" // Diurutkan dari yang paling lama lewat
+);
 ?>
 
 <!DOCTYPE html>
