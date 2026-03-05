@@ -50,22 +50,24 @@ ORDER BY jumlah DESC"
 
 $resTaskOverdue = mysqli_query(
     $conn,
-    "SELECT * FROM task 
-     WHERE status_cek != 'Selesai' 
-     AND tgl_release IS NOT NULL 
-     AND tgl_release != '0000-00-00' 
-     AND tgl_release < CURDATE()
-     ORDER BY tgl_release ASC" // Diurutkan dari yang paling lama lewat
+    "SELECT t.*, c.nama AS faskes_nama FROM task t
+     LEFT JOIN client c ON t.faskes = c.nama
+     WHERE t.status_cek != 'Selesai' 
+     AND t.tgl_release IS NOT NULL 
+     AND t.tgl_release > '2000-01-01' 
+     AND t.tgl_release < CURDATE()
+     ORDER BY t.tgl_release ASC" // Diurutkan dari yang paling lama lewat
 );
 
 $resTaskDueSoon = mysqli_query(
     $conn,
-    "SELECT * FROM task 
-     WHERE status_cek != 'Selesai' 
-     AND tgl_release IS NOT NULL 
-     AND tgl_release != '0000-00-00' 
-     AND tgl_release BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-     ORDER BY tgl_release ASC" // Diurutkan dari yang paling mepet (hari ini/besok)
+    "SELECT t.*, c.nama AS faskes_nama FROM task t
+     LEFT JOIN client c ON t.faskes = c.nama
+     WHERE t.status_cek != 'Selesai' 
+     AND t.tgl_release IS NOT NULL 
+     AND t.tgl_release > '2000-01-01' 
+     AND t.tgl_release BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+     ORDER BY t.tgl_release ASC" // Diurutkan dari yang paling mepet (hari ini/besok)
 );
 ?>
 
@@ -200,6 +202,87 @@ $resTaskDueSoon = mysqli_query(
                             endif;
                         endwhile;
                         ?>
+                    </div>
+                </div>
+            </div>
+            <!-- Section Baru: Overdue dan Due Soon -->
+            <div class="grid grid-cols-2 gap-10 mt-10">
+
+                <!-- 1. Task Overdue List -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+                    <div class="bg-rose-100 px-6 py-4 flex justify-between items-center sticky top-0">
+                        <h4 class="text-rose-800 font-bold text-sm tracking-wider uppercase">
+                            <i class="fas fa-exclamation-triangle mr-2"></i> Task Overdue
+                        </h4>
+                        <span class="bg-rose-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            <?= mysqli_num_rows($resTaskOverdue) ?> Task
+                        </span>
+                    </div>
+                    <div class="p-0 overflow-y-auto flex-1">
+                        <?php if (mysqli_num_rows($resTaskOverdue) > 0): ?>
+                            <ul class="divide-y divide-gray-100">
+                                <?php while ($row = mysqli_fetch_assoc($resTaskOverdue)): ?>
+                                    <li class="p-4 hover:bg-rose-50 transition duration-150">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <a href="edit_task.php?id=<?= $row['id'] ?>" class="text-sm font-bold text-gray-800 hover:text-rose-600 transition">
+                                                <?= htmlspecialchars($row['fitur'] ?? '-') ?>
+                                            </a>
+                                            <span class="text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-700 whitespace-nowrap ml-2">
+                                                <?= date('d M Y', strtotime($row['tgl_release'])) ?>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center text-xs text-gray-500 mt-2 space-x-4">
+                                            <span title="Faskes"><i class="fas fa-hospital text-gray-400 mr-1"></i> <?= htmlspecialchars($row['faskes_nama'] ?? $row['faskes']) ?></span>
+                                            <span title="Enginer"><i class="fas fa-user-cog text-gray-400 mr-1"></i> <?= htmlspecialchars($row['enginer'] ?? '-') ?></span>
+                                        </div>
+                                    </li>
+                                <?php endwhile; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="p-10 text-center text-gray-400 flex flex-col items-center justify-center">
+                                <i class="fas fa-check-circle text-4xl mb-3 text-emerald-300"></i>
+                                <p class="text-sm">Hebat! Tidak ada task yang overdue.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- 2. Task Due Soon List -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+                    <div class="bg-amber-100 px-6 py-4 flex justify-between items-center sticky top-0">
+                        <h4 class="text-amber-800 font-bold text-sm tracking-wider uppercase">
+                            <i class="fas fa-hourglass-half mr-2"></i> Task Due Soon (H-7)
+                        </h4>
+                        <span class="bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            <?= mysqli_num_rows($resTaskDueSoon) ?> Task
+                        </span>
+                    </div>
+                    <div class="p-0 overflow-y-auto flex-1">
+                        <?php if (mysqli_num_rows($resTaskDueSoon) > 0): ?>
+                            <ul class="divide-y divide-gray-100">
+                                <?php while ($row = mysqli_fetch_assoc($resTaskDueSoon)): ?>
+                                    <li class="p-4 hover:bg-amber-50 transition duration-150">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <a href="edit_task.php?id=<?= $row['id'] ?>" class="text-sm font-bold text-gray-800 hover:text-amber-600 transition">
+                                                <?= htmlspecialchars($row['fitur'] ?? '-') ?>
+                                            </a>
+                                            <span class="text-[10px] font-bold px-2 py-1 rounded bg-amber-100 text-amber-700 whitespace-nowrap ml-2">
+                                                <?= date('d M Y', strtotime($row['tgl_release'])) ?>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center text-xs text-gray-500 mt-2 space-x-4">
+                                            <span title="Faskes"><i class="fas fa-hospital text-gray-400 mr-1"></i> <?= htmlspecialchars($row['faskes_nama'] ?? $row['faskes']) ?></span>
+                                            <span title="Enginer"><i class="fas fa-user-cog text-gray-400 mr-1"></i> <?= htmlspecialchars($row['enginer'] ?? '-') ?></span>
+                                        </div>
+                                    </li>
+                                <?php endwhile; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="p-10 text-center text-gray-400 flex flex-col items-center justify-center">
+                                <i class="fas fa-calendar-check text-4xl mb-3 text-gray-300"></i>
+                                <p class="text-sm">Belum ada task yang mendekati deadline.</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
