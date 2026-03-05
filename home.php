@@ -57,6 +57,16 @@ $resTaskOverdue = mysqli_query(
      AND tgl_release < CURDATE()
      ORDER BY tgl_release ASC" // Diurutkan dari yang paling lama lewat
 );
+
+$resTaskDueSoon = mysqli_query(
+    $conn,
+    "SELECT * FROM task 
+     WHERE status_cek != 'Selesai' 
+     AND tgl_release IS NOT NULL 
+     AND tgl_release != '0000-00-00' 
+     AND tgl_release BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+     ORDER BY tgl_release ASC" // Diurutkan dari yang paling mepet (hari ini/besok)
+);
 ?>
 
 <!DOCTYPE html>
