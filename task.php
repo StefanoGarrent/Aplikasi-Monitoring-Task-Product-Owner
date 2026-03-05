@@ -16,6 +16,7 @@ $filterStatus = isset($_GET['status_task']) ? mysqli_real_escape_string($conn, $
 $filterStatusCek = isset($_GET['status_cek']) ? mysqli_real_escape_string($conn, $_GET['status_cek']) : 'all';
 $filterStart = isset($_GET['start_date']) ? mysqli_real_escape_string($conn, $_GET['start_date']) : '';
 $filterEnd = isset($_GET['end_date']) ? mysqli_real_escape_string($conn, $_GET['end_date']) : '';
+$filterTimeline = isset($_GET['timeline']) ? mysqli_real_escape_string($conn, $_GET['timeline']) : 'all';
 
 // 2. Logika Paginasi
 $limit = 10;
@@ -34,6 +35,16 @@ if ($filterStatus == 'not') $conditions[] = "task.task_url = '-'";
 if ($filterStatusCek != 'all') $conditions[] = "task.status_cek = '$filterStatusCek'";
 if (!empty($filterStart) && !empty($filterEnd)) {
     $conditions[] = "task.tgl_release BETWEEN '$filterStart' AND '$filterEnd'";
+}
+
+if ($filterTimeline == 'overdue') {
+    $conditions[] = "task.status_cek != 'Selesai'";
+    $conditions[] = "task.tgl_release IS NOT NULL AND task.tgl_release > '2000-01-01'";
+    $conditions[] = "task.tgl_release < CURDATE()";
+} elseif ($filterTimeline == 'due_soon') {
+    $conditions[] = "task.status_cek != 'Selesai'";
+    $conditions[] = "task.tgl_release IS NOT NULL AND task.tgl_release > '2000-01-01'";
+    $conditions[] = "task.tgl_release BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
 }
 
 $whereClause = "";
@@ -269,7 +280,7 @@ $resTask = mysqli_query($conn, $query);
                         </select>
                     </div>
 
-                     <!-- Filter Status Cek -->
+                    <!-- Filter Status Cek -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-2 flex items-center">
                             <i class="fas fa-clipboard-check text-[#003674] mr-2 text-sm"></i>
@@ -314,6 +325,7 @@ $resTask = mysqli_query($conn, $query);
                 if ($filterJenis != 'all') $activeFilters++;
                 if ($filterStatus != 'all') $activeFilters++;
                 if (!empty($filterStart) && !empty($filterEnd)) $activeFilters++;
+                if ($filterTimeline != 'all') $activeFilters++;
 
                 if ($activeFilters > 0): ?>
                     <div class="mt-4 pt-4 border-t border-gray-200">
