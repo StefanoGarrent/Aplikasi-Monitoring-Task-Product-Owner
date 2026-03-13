@@ -5,7 +5,7 @@ if (!isset($_SESSION['loggedin'])) {
     exit;
 }
 
-require_once 'services/koneksi.php'; 
+require_once 'services/koneksi.php';
 
 if (!isset($_GET['id'])) {
     header("Location: task.php");
@@ -58,6 +58,7 @@ if (isset($_POST['update'])) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,9 +67,13 @@ if (isset($_POST['update'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-[#F0F2F5]">
 
     <div class="flex min-h-screen">
@@ -117,27 +122,27 @@ if (isset($_POST['update'])) {
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Tim Product</label>
                             <select name="product" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00D285] outline-none transition cursor-pointer">
-                                <?php while($row = mysqli_fetch_assoc($resProduct)): ?>
+                                <?php while ($row = mysqli_fetch_assoc($resProduct)): ?>
                                     <option value="<?= htmlspecialchars($row['nama']) ?>" <?= $data['product'] == $row['nama'] ? 'selected' : '' ?>><?= htmlspecialchars($row['nama']) ?></option>
                                 <?php endwhile; ?>
                             </select>
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Tim Enginer</label>
                             <select name="enginer" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00D285] outline-none transition cursor-pointer">
-                                <?php while($row = mysqli_fetch_assoc($resEnginer)): ?>
+                                <?php while ($row = mysqli_fetch_assoc($resEnginer)): ?>
                                     <option value="<?= htmlspecialchars($row['nama']) ?>" <?= $data['enginer'] == $row['nama'] ? 'selected' : '' ?>><?= htmlspecialchars($row['nama']) ?></option>
                                 <?php endwhile; ?>
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Client Faskes</label>
                             <select name="faskes" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00D285] outline-none transition cursor-pointer">
-                                <?php while($row = mysqli_fetch_assoc($resFaskes)): ?>
+                                <?php while ($row = mysqli_fetch_assoc($resFaskes)): ?>
                                     <option value="<?= htmlspecialchars($row['nama']) ?>" <?= $data['faskes'] == $row['nama'] ? 'selected' : '' ?>><?= htmlspecialchars($row['nama']) ?></option>
                                 <?php endwhile; ?>
                             </select>
@@ -155,17 +160,9 @@ if (isset($_POST['update'])) {
                         </div>
                     </div>
 
-                    <!-- Simpan tanggal lama untuk perbandinggan -->
-                     <input type="hidden" name="tgl_release_lama" value="<?= htmlspecialchars($data['tgl_release']) ?>">
+                    <!-- Simpan tanggal lama untuk perbandingan -->
+                    <input type="hidden" name="tgl_release_lama" value="<?= htmlspecialchars($data['tgl_release']) ?>">
 
-                    <!-- Textarea alasan - awalnya tersembunyi -->
-                     <div id="alasan-container" style="display: none;" class="col-span-2">
-                        <label class="block text-sm font-semibold text-red-600 mb-2">
-                            <i class="fas fa-exclamation-circle mr-1"></i> Alasan Perubahan Tanggal Rilis <span class="text-red-500"></span>
-                        </label>
-                        <textarea name="alasan_perubahan" id="alasan_perubahan" rows="2" placeholder="Contoh: Engineer sedang sakit, resource kurang"
-                            class="w-full px-4 py-3 rounded-lg border border-red-300 focus:ring-2 focus:ring-red-400 outline-none transition bg-red-50"></textarea>
-                    </div>
                     <div class="grid grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Release</label>
@@ -175,6 +172,15 @@ if (isset($_POST['update'])) {
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Request Fitur</label>
                             <input type="text" name="fitur" value="<?= htmlspecialchars($data['fitur']) ?>" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00D285] outline-none transition">
                         </div>
+                    </div>
+
+                    <!-- Textarea alasan - awalnya tersembunyi, muncul jika tanggal diubah -->
+                    <div id="alasan-container" style="display: none;">
+                        <label class="block text-sm font-semibold text-red-600 mb-2">
+                            <i class="fas fa-exclamation-circle mr-1"></i> Alasan Perubahan Tanggal Rilis <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="alasan_perubahan" id="alasan_perubahan" rows="2" placeholder="Contoh: Engineer sedang sakit, resource kurang"
+                            class="w-full px-4 py-3 rounded-lg border border-red-300 focus:ring-2 focus:ring-red-400 outline-none transition bg-red-50"></textarea>
                     </div>
 
                     <div>
@@ -197,6 +203,26 @@ if (isset($_POST['update'])) {
             </div>
         </main>
     </div>
+    <script>
+        const inputTanggal = document.querySelector('input[name="tgl_release"]');
+        const tanggalLama = document.querySelector('input[name="tgl_release_lama"]').value;
+        const alasanContainer = document.getElementById('alasan-container');
+        const alasanInput = document.getElementById('alasan_perubahan');
+
+        inputTanggal.addEventListener('change', function() {
+            if (this.value !== tanggalLama) {
+                // Tanggal berubah → tampilkan textarea alasan, wajib diisi
+                alasanContainer.style.display = 'block';
+                alasanInput.setAttribute('required', 'required');
+            } else {
+                // Tanggal kembali ke semula → sembunyikan textarea
+                alasanContainer.style.display = 'none';
+                alasanInput.removeAttribute('required');
+                alasanInput.value = '';
+            }
+        });
+    </script>
 
 </body>
+
 </html>
