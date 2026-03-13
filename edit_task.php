@@ -212,35 +212,35 @@ if (isset($_POST['update'])) {
             </div>
             <!-- Riwayat Perubahan Tanggal Rilis -->
             <?php if (mysqli_num_rows($resLog) > 0): ?>
-            <div class="max-w-2xl mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-                <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
-                    <h3 class="text-sm font-bold text-amber-800 uppercase tracking-wider">
-                        <i class="fas fa-history mr-2"></i> Riwayat Perubahan Tanggal Rilis
-                    </h3>
-                </div>
-                <div class="p-6 space-y-4">
-                    <?php while ($log = mysqli_fetch_assoc($resLog)): ?>
-                        <div class="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 border border-gray-100">
-                            <div class="mt-1">
-                                <i class="fas fa-calendar-alt text-amber-500"></i>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2 text-sm">
-                                    <span class="font-bold text-red-500 line-through"><?= date('d M Y', strtotime($log['tgl_lama'])) ?></span>
-                                    <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
-                                    <span class="font-bold text-green-600"><?= date('d M Y', strtotime($log['tgl_baru'])) ?></span>
+                <div class="max-w-2xl mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
+                        <h3 class="text-sm font-bold text-amber-800 uppercase tracking-wider">
+                            <i class="fas fa-history mr-2"></i> Riwayat Perubahan Tanggal Rilis
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <?php while ($log = mysqli_fetch_assoc($resLog)): ?>
+                            <div class="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 border border-gray-100">
+                                <div class="mt-1">
+                                    <i class="fas fa-calendar-alt text-amber-500"></i>
                                 </div>
-                                <p class="text-sm text-gray-600 mt-1">
-                                    <i class="fas fa-comment-alt text-gray-400 mr-1"></i> <?= htmlspecialchars($log['alasan']) ?>
-                                </p>
-                                <p class="text-[10px] text-gray-400 mt-1">
-                                    <i class="fas fa-clock mr-1"></i> Diubah pada <?= date('d M Y, H:i', strtotime($log['created_at'])) ?>
-                                </p>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 text-sm">
+                                        <span class="font-bold text-red-500 line-through"><?= date('d M Y', strtotime($log['tgl_lama'])) ?></span>
+                                        <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                                        <span class="font-bold text-green-600"><?= date('d M Y', strtotime($log['tgl_baru'])) ?></span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <i class="fas fa-comment-alt text-gray-400 mr-1"></i> <?= htmlspecialchars($log['alasan']) ?>
+                                    </p>
+                                    <p class="text-[10px] text-gray-400 mt-1">
+                                        <i class="fas fa-clock mr-1"></i> Diubah pada <?= date('d M Y, H:i', strtotime($log['created_at'])) ?>
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    <?php endwhile; ?>
+                        <?php endwhile; ?>
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
 
         </main>
@@ -250,19 +250,56 @@ if (isset($_POST['update'])) {
         const tanggalLama = document.querySelector('input[name="tgl_release_lama"]').value;
         const alasanContainer = document.getElementById('alasan-container');
         const alasanInput = document.getElementById('alasan_perubahan');
+        const btnUpdate = document.querySelector('button[name="update"]');
 
         inputTanggal.addEventListener('change', function() {
             if (this.value !== tanggalLama) {
                 // Tanggal berubah → tampilkan textarea alasan, wajib diisi
                 alasanContainer.style.display = 'block';
                 alasanInput.setAttribute('required', 'required');
+                // Cek apakah textarea sudah diisi
+                cekAlasan();
             } else {
                 // Tanggal kembali ke semula → sembunyikan textarea
                 alasanContainer.style.display = 'none';
                 alasanInput.removeAttribute('required');
                 alasanInput.value = '';
+                // Kembalikan textarea ke merah & tombol aktif
+                setTextareaStyle(false);
+                btnUpdate.disabled = false;
+                btnUpdate.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         });
+
+        // Deteksi saat user mengetik di textarea alasan
+        alasanInput.addEventListener('input', cekAlasan);
+
+        function cekAlasan() {
+            const isiAlasan = alasanInput.value.trim();
+            if (isiAlasan.length > 0) {
+                // Sudah diisi → hijau, tombol aktif
+                setTextareaStyle(true);
+                btnUpdate.disabled = false;
+                btnUpdate.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                // Kosong → merah, tombol disabled
+                setTextareaStyle(false);
+                btnUpdate.disabled = true;
+                btnUpdate.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function setTextareaStyle(isFilled) {
+            if (isFilled) {
+                // Hijau
+                alasanInput.classList.remove('border-red-300', 'bg-red-50', 'focus:ring-red-400');
+                alasanInput.classList.add('border-green-300', 'bg-green-50', 'focus:ring-green-400');
+            } else {
+                // Merah
+                alasanInput.classList.remove('border-green-300', 'bg-green-50', 'focus:ring-green-400');
+                alasanInput.classList.add('border-red-300', 'bg-red-50', 'focus:ring-red-400');
+            }
+        }
     </script>
 
 </body>
