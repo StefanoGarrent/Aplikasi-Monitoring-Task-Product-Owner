@@ -155,6 +155,17 @@ if (isset($_POST['update'])) {
                         </div>
                     </div>
 
+                    <!-- Simpan tanggal lama untuk perbandinggan -->
+                     <input type="hidden" name="tgl_release_lama" value="<?= htmlspecialchars($data['tgl_release']) ?>">
+
+                    <!-- Textarea alasan - awalnya tersembunyi -->
+                     <div id="alasan-container" style="display: none;" class="col-span-2">
+                        <label class="block text-sm font-semibold text-red-600 mb-2">
+                            <i class="fas fa-exclamation-circle mr-1"></i> Alasan Perubahan Tanggal Rilis <span class="text-red-500"></span>
+                        </label>
+                        <textarea name="alasan_perubahan" id="alasan_perubahan" rows="2" placeholder="Contoh: Engineer sedang sakit, resource kurang"
+                            class="w-full px-4 py-3 rounded-lg border border-red-300 focus:ring-2 focus:ring-red-400 outline-none transition bg-red-50"></textarea>
+                    </div>
                     <div class="grid grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Release</label>

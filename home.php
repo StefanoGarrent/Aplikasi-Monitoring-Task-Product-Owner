@@ -242,7 +242,7 @@ $resTaskDueSoon = mysqli_query(
                                 <?php endwhile; ?>
                             </ul>
                         <?php else: ?>
-                            <div class="p-10 text-center text-gray-400 flex flex-col items-center justify-center">
+                            <div class="h-full min-h-[200px] p-10 text-center text-gray-400 flex flex-col items-center justify-center">
                                 <i class="fas fa-check-circle text-4xl mb-3 text-emerald-300"></i>
                                 <p class="text-sm">Hebat! Tidak ada task yang overdue.</p>
                             </div>
@@ -284,7 +284,7 @@ $resTaskDueSoon = mysqli_query(
                                 <?php endwhile; ?>
                             </ul>
                         <?php else: ?>
-                            <div class="p-10 text-center text-gray-400 flex flex-col items-center justify-center">
+                            <div class="h-full min-h-[200px] p-10 text-center text-gray-400 flex flex-col items-center justify-center">
                                 <i class="fas fa-calendar-check text-4xl mb-3 text-gray-300"></i>
                                 <p class="text-sm">Belum ada task yang mendekati deadline.</p>
                             </div>
