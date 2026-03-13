@@ -24,6 +24,7 @@ if (!$data) {
 $resProduct = mysqli_query($conn, "SELECT nama FROM team WHERE tim = 'PRODUCT'");
 $resEnginer = mysqli_query($conn, "SELECT nama FROM team WHERE tim = 'ENGINER'");
 $resFaskes = mysqli_query($conn, "SELECT nama FROM client");
+$resLog = mysqli_query($conn, "SELECT * FROM log_tgl_release WHERE task_id = '$id' ORDER BY created_at DESC");
 
 $message = "";
 if (isset($_POST['update'])) {
@@ -209,6 +210,39 @@ if (isset($_POST['update'])) {
                     </div>
                 </form>
             </div>
+            <!-- Riwayat Perubahan Tanggal Rilis -->
+            <?php if (mysqli_num_rows($resLog) > 0): ?>
+            <div class="max-w-2xl mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-amber-50 px-6 py-4 border-b border-amber-200">
+                    <h3 class="text-sm font-bold text-amber-800 uppercase tracking-wider">
+                        <i class="fas fa-history mr-2"></i> Riwayat Perubahan Tanggal Rilis
+                    </h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <?php while ($log = mysqli_fetch_assoc($resLog)): ?>
+                        <div class="flex items-start space-x-3 p-3 rounded-lg bg-gray-50 border border-gray-100">
+                            <div class="mt-1">
+                                <i class="fas fa-calendar-alt text-amber-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <span class="font-bold text-red-500 line-through"><?= date('d M Y', strtotime($log['tgl_lama'])) ?></span>
+                                    <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                                    <span class="font-bold text-green-600"><?= date('d M Y', strtotime($log['tgl_baru'])) ?></span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-comment-alt text-gray-400 mr-1"></i> <?= htmlspecialchars($log['alasan']) ?>
+                                </p>
+                                <p class="text-[10px] text-gray-400 mt-1">
+                                    <i class="fas fa-clock mr-1"></i> Diubah pada <?= date('d M Y, H:i', strtotime($log['created_at'])) ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
         </main>
     </div>
     <script>
