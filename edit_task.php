@@ -35,6 +35,8 @@ if (isset($_POST['update'])) {
     $task_url  = mysqli_real_escape_string($conn, $_POST['task_url']);
     $enginer   = mysqli_real_escape_string($conn, $_POST['enginer']);
     $tgl_release = mysqli_real_escape_string($conn, $_POST['tgl_release']);
+    $tgl_release_lama = mysqli_real_escape_string($conn, $_POST['tgl_release_lama']);
+    $alasan_perubahan = mysqli_real_escape_string($conn, $_POST['alasan_perubahan'] ?? '');
 
     $update = mysqli_query($conn, "UPDATE task SET 
                 product = '$product',
@@ -48,6 +50,12 @@ if (isset($_POST['update'])) {
                 WHERE id = '$id'");
 
     if ($update) {
+        // cek apakah tanggal rilis berubah
+        if ($tgl_release != $tgl_release_lama && !empty($alasan_perubahan)) {
+            // Simpan log perubahan tanggal
+            mysqli_query($conn, "INSERT INTO log_tgl_release (task_id, tgl_lama, tgl_baru, alasan)
+         VALUES ('$id', '$tgl_release_lama', '$tgl_release', '$alasan_perubahan')");
+        }
         header("Location: task.php?status=success");
         exit;
     } else {
