@@ -13,19 +13,22 @@ $status = "";
 $resProduct = mysqli_query($conn, "SELECT nama FROM team WHERE tim = 'PRODUCT'");
 $resEnginer = mysqli_query($conn, "SELECT nama FROM team WHERE tim = 'ENGINER'");
 $resFaskes  = mysqli_query($conn, "SELECT nama FROM client");
+$resModul   = mysqli_query($conn, "SELECT DISTINCT modul FROM task WHERE modul != '' ORDER BY modul ASC");
 
 if (isset($_POST['submit'])) {
     $product  = mysqli_real_escape_string($conn, $_POST['product']);
     $faskes   = mysqli_real_escape_string($conn, $_POST['faskes']);
     $jenis    = mysqli_real_escape_string($conn, $_POST['jenis']);
+    $modul    = mysqli_real_escape_string($conn, $_POST['modul']); 
     $fitur    = mysqli_real_escape_string($conn, $_POST['fitur']);
     $keterangan = mysqli_real_escape_string($conn, $_POST['keterangan']);
     $task     = mysqli_real_escape_string($conn, $_POST['task_url']);
     $enginer  = mysqli_real_escape_string($conn, $_POST['enginer']);
     $tgl_release = mysqli_real_escape_string($conn, $_POST['tgl_release']);
+    
 
-    $insert = mysqli_query($conn, "INSERT INTO task (product, faskes, jenis, fitur, keterangan, task_url, enginer, tgl_release, status_cek) 
-                                   VALUES ('$product', '$faskes', '$jenis', '$fitur', '$keterangan', '$task', '$enginer', '$tgl_release', 'Belum di cek')");
+    $insert = mysqli_query($conn, "INSERT INTO task (product, faskes, jenis, fitur, keterangan, task_url, enginer, tgl_release, status_cek, modul) 
+                                   VALUES ('$product', '$faskes', '$jenis', '$fitur', '$keterangan', '$task', '$enginer', '$tgl_release', 'Belum di cek', '$modul')");
 
     if ($insert) {
         header("Location: task.php?status=added");
