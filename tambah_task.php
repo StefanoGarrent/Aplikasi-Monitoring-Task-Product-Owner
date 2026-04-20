@@ -299,10 +299,20 @@ if (isset($_POST['submit'])) {
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-6">
+                    <div class="grid grid-cols-3 gap-6">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Release</label>
                             <input type="date" name="tgl_release" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00D285] outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Modul</label>
+                            <input type="text" name="modul" list="daftar_modul" placeholder="Ketik atau pilih modul..." required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00D285] outline-none transition">
+                            <datalist id="daftar_modul">
+                                <?php while ($row = mysqli_fetch_assoc($resModul)): ?>
+                                    <option value="<?= htmlspecialchars($row['modul']) ?>">
+                                        <?php endwhile; ?>
+                                    </option>
+                            </datalist>  
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Request Fitur</label>
